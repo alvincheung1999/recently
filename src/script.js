@@ -20,7 +20,7 @@ export async function main() {
   
 main();
 
-export async function redirectToAuthCodeFlow(clientId: string) {
+export async function redirectToAuthCodeFlow(clientId) {
     const verifier = generateCodeVerifier(128);
     const challenge = await generateCodeChallenge(verifier);
 
@@ -37,7 +37,7 @@ export async function redirectToAuthCodeFlow(clientId: string) {
     document.location = `https://accounts.spotify.com/authorize?${params.toString()}`;
 }
 
-function generateCodeVerifier(length: number) {
+function generateCodeVerifier(length) {
     let text = '';
     let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -47,7 +47,7 @@ function generateCodeVerifier(length: number) {
     return text;
 }
 
-async function generateCodeChallenge(codeVerifier: string) {
+async function generateCodeChallenge(codeVerifier) {
     const data = new TextEncoder().encode(codeVerifier);
     const digest = await window.crypto.subtle.digest('SHA-256', data);
     return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
@@ -56,7 +56,7 @@ async function generateCodeChallenge(codeVerifier: string) {
         .replace(/=+$/, '');
 }
 
-export async function getAccessToken(clientId: string, code: string): Promise<string> {
+export async function getAccessToken(clientId, code) {
     const verifier = localStorage.getItem("verifier");
 
     const params = new URLSearchParams();
@@ -64,7 +64,7 @@ export async function getAccessToken(clientId: string, code: string): Promise<st
     params.append("grant_type", "authorization_code");
     params.append("code", code);
     params.append("redirect_uri", "https://alvincheung1999.github.io/recently");
-    params.append("code_verifier", verifier!);
+    params.append("code_verifier");
 
     const result = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
@@ -77,7 +77,7 @@ export async function getAccessToken(clientId: string, code: string): Promise<st
     return access_token;
 }
 
-async function fetchProfile(token: string): Promise<any> {
+async function fetchProfile(token) {
     const result = await fetch("https://api.spotify.com/v1/me", {
         method: "GET", headers: { Authorization: `Bearer ${token}` }
     });
@@ -87,7 +87,7 @@ async function fetchProfile(token: string): Promise<any> {
     return await result.json();
 }
 
-async function getTopTracks(token: string): Promise<any> {
+async function getTopTracks(token) {
     const result = await fetch("https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=30", {
         method: "GET", headers: { Authorization: `Bearer ${token}`}
     });
@@ -97,20 +97,20 @@ async function getTopTracks(token: string): Promise<any> {
     return await result.json();
 }
 
-function populateUI(profile: any, tracks: any) {
-    document.getElementById("displayName")!.innerText = profile.display_name;
+function populateUI(profile, tracks) {
+    document.getElementById("displayName").innerText = profile.display_name;
     if (profile.images[0]) {
         const profileImage = new Image(200, 200);
         profileImage.src = profile.images[0].url;
-        document.getElementById("avatar")!.appendChild(profileImage);
+        document.getElementById("avatar").appendChild(profileImage);
     }
-    document.getElementById("id")!.innerText = profile.id;
-    document.getElementById("email")!.innerText = profile.email;
-    document.getElementById("uri")!.innerText = profile.uri;
-    document.getElementById("uri")!.setAttribute("href", profile.external_urls.spotify);
-    document.getElementById("url")!.innerText = profile.href;
-    document.getElementById("url")!.setAttribute("href", profile.href);
-    document.getElementById("imgUrl")!.innerText = profile.images[0]?.url ?? '(no profile image)';
+    document.getElementById("id").innerText = profile.id;
+    document.getElementById("email").innerText = profile.email;
+    document.getElementById("uri").innerText = profile.uri;
+    document.getElementById("uri").setAttribute("href", profile.external_urls.spotify);
+    document.getElementById("url").innerText = profile.href;
+    document.getElementById("url").setAttribute("href", profile.href);
+    document.getElementById("imgUrl").innerText = profile.images[0]?.url ?? '(no profile image)';
     
     const trackListElement = document.getElementById('trackList');
     const coverArt = document.getElementById('art');
