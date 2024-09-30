@@ -1,4 +1,4 @@
-const clientId = "40fa62a160f94d5ebdb1444834176b9c"; // Replace with your client id
+const clientId = "40fa62a160f94d5ebdb1444834176b9c";
 const params = new URLSearchParams(window.location.search);
 const code = params.get("code");
 
@@ -64,7 +64,7 @@ export async function getAccessToken(clientId, code) {
     params.append("grant_type", "authorization_code");
     params.append("code", code);
     params.append("redirect_uri", "https://alvincheung1999.github.io/recently");
-    params.append("code_verifier");
+    params.append("code_verifier", verifier);
 
     const result = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
